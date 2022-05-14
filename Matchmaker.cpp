@@ -1,109 +1,18 @@
 #include "Matchmaker.h"
 using namespace std;
 
-/* Matchmaker has two parts. The first part, has Perfect Matching,
- * takes in a map of people and potential matches. It returns if
- * it is possible, with this set of people, for every to be
- * matched with a potential partner.
- *
- * Weighted Matches instead takes in a map of people as well
- * as their weighted preferences for partners. It then
- * returns a set of partners for which the "happiness
- * weight" is maximized."
- */
-
-
-
-
-/* Recursively runs through students and potential partners,
- * returning if a perfect match is possible
- * */
-bool hasPerfectMatchingRec(Map<string, Set<string>> possibleLinks, Set<Pair>& matching, Set<string> peopleToMatch) {
-    /* If odd number of people then can't be a perfect match*/
-    if (peopleToMatch.size() % 2 == 1) {
-        return false;
-    }
-    /* If all people paired then a perfect match*/
-    if (peopleToMatch.isEmpty()) {
-        matching = {};  // Resets outparameter
-        return true;
-    }
-    else {
-        string person = peopleToMatch.first();
-        for (string match: possibleLinks[person]) {
-            if (peopleToMatch.contains(match)) {  // Check the potential match isn't already matched
-                if (hasPerfectMatchingRec(possibleLinks, matching, peopleToMatch - person - match)) {
-                    matching += Pair(match, person);
-                    return true;
-                }
-            }
-        }
-    }
+bool hasPerfectMatching(const Map<string, Set<string>>& possibleLinks, Set<Pair>& matching) {
+    /* TODO: Delete this comment and these remaining lines, then implement this function. */
+    (void) possibleLinks;
+    (void) matching;
     return false;
 }
 
-/* Wrapper function to kickstart recursive aspect */
-bool hasPerfectMatching(const Map<string, Set<string>>& possibleLinks, Set<Pair>& matching) {
-    Set<string> peopleToMatch;
-    for (string person: possibleLinks) {
-        peopleToMatch += person;
-    }
-    return hasPerfectMatchingRec(possibleLinks, matching, peopleToMatch);
-}
-
-
-/* Checks if given set has a higher weight than the current best set.
- * If so, it replaces the best set.
- */
-void checkBestSet(const Map<string, Map<string, int>>& possibleLinks, int& valBest, Set<Pair>& groups,
-                  Set<Pair>& bestGroups) {
-    int val = 0;
-    for (Pair link: groups) {
-        val += possibleLinks[link.first()][link.second()];
-    }
-    if (val > valBest) {
-        valBest = val;
-        bestGroups = groups;
-    }
-}
-
-/* Recursively calls a map of people and tries different combinations of
- * matches to find which has the greatest happiness weight
- */
-void maximumWeightMatchingRec(const Map<string, Map<string, int>>& possibleLinks, Set<string> peopleToDecide,
-                                   Set<Pair> groups, int& valBest, Set<Pair>& bestGroups) {
-    /* Base Case: made decisions about everyone */
-    if (peopleToDecide.isEmpty()) {
-        checkBestSet(possibleLinks, valBest, groups, bestGroups);
-    }
-    /* Recursive step: keep making groups */
-    else {
-        string person = peopleToDecide.first();
-        for (string match: possibleLinks[person]) {
-            if (peopleToDecide.contains(match)) {
-                maximumWeightMatchingRec(possibleLinks, peopleToDecide - person - match,
-                                         groups + Pair(person, match), valBest, bestGroups);
-            }
-        }
-        /* Case where person is alone (not paired)*/
-        maximumWeightMatchingRec(possibleLinks, peopleToDecide - person,
-                                 groups, valBest, bestGroups);
-    }
-}
-
-/* Wrapper function and kickstarts recursive function*/
 Set<Pair> maximumWeightMatching(const Map<string, Map<string, int>>& possibleLinks) {
-    Set<string> peopleToDecide;
-    for (string person: possibleLinks) {
-        peopleToDecide += person;
-    }
-    Set<Pair> groups;
-    int valBest = 0;
-    Set<Pair> bestGroups;
-    maximumWeightMatchingRec(possibleLinks, peopleToDecide, groups, valBest, bestGroups);
-    return bestGroups;
+    /* TODO: Delete this comment and these remaining lines, then implement this function. */
+    (void) possibleLinks;
+    return { };
 }
-
 
 /* * * * * Test Cases Below This Point * * * * */
 
@@ -169,59 +78,6 @@ namespace {
 }
 
 #include "GUI/SimpleTest.h"
-
-STUDENT_TEST("hasPerfectMatching works on a world with two unlinked people.") {
-    /* The world is two people; however, they are not matches to each other.
-     *
-     *                 A     B
-     *
-     * There is no perfect matching.
-     */
-
-    Set<Pair> unused;
-    EXPECT(!hasPerfectMatching({ { "A", {} }, { "B", {} } }, unused));
-}
-
-STUDENT_TEST("maximumWeightMatching: Doesn't pair people with negative weight.") {
-    /* This world:
-     *
-     *        -10
-     *      A --- B
-     *      |     |
-     *  -70 |     | -1000
-     *      |     |
-     *      D --- C
-     *         4
-     *
-     * Best option is to pick BC/AD.
-     */
-    auto links = fromWeightedLinks({
-        { "A", "B", -10 },
-        { "B", "C", -1000 },
-        { "C", "D", 4 },
-        { "D", "A", -70},
-    });
-
-    /* Should pick C--D. */
-    EXPECT_EQUAL(maximumWeightMatching(links), { {"C", "D"} });
-}
-
-STUDENT_TEST("maximumWeightMatching: Works when 2 options tied for weight.") {
-    /* This world:
-     *
-     *          5     5
-     *       A --- B --- C
-     *
-     * Best option is to pick either AB or BC.
-     */
-    auto links = fromWeightedLinks({
-        { "A", "B", 5 },
-        { "B", "C", 5 },
-    });
-
-    /* Should pick A--B because it's made first */
-    EXPECT_EQUAL(maximumWeightMatching(links), { {"A", "B"} });
-}
 
 PROVIDED_TEST("hasPerfectMatching works on a world with just one person.") {
     /* The world is just a single person A, with no others. How sad. :-(

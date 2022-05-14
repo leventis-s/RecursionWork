@@ -1,67 +1,17 @@
 #include "DisasterPlanning.h"
 using namespace std;
 
-/* DisasterPlanning takes in a road network and a number of cities that are able
- * to be supplied. It then returns whether all cities will be covered for
- * disasters, and, if so, a possibility as to how to allocate supplies.
+/* TODO: Refer to DisasterPlanning.h for more information about this function.
+ * Then, delete this comment.
  */
-
-/* Finds the neighboring cities of the supplied city,
- * as the neighbors will now also be covered. */
-Set<string> findNeighbors(const Map<string, Set<string>>& roadNetwork, string place) {
-    Set<string> neighbors = {place};
-    for (string neighbor: roadNetwork[place]) {
-        neighbors += neighbor;
-    }
-    return neighbors;
-}
-
-/* Recursively calls itself to check for a combonition for the
- * allocation of supplies that will cover all cities. */
-bool canBeMadeDisasterReadyRec(const Map<string, Set<string>>& roadNetwork,
-                               int numCities,
-                               Set<string>& supplyLocations, Set<string> citiesToSupply) {
-    /* Base Case No more cities to supply*/
-    if (citiesToSupply.isEmpty()) {
-        supplyLocations = {};
-        return true;
-    }
-    /* We still have cities to supply but no more supplies */
-    if (numCities == 0) {
-        return false;
-    }
-    else {
-        string city = citiesToSupply.first();
-        /* Either the city supplies itself */
-        if (canBeMadeDisasterReadyRec(roadNetwork, numCities - 1, supplyLocations,
-                                          citiesToSupply - findNeighbors(roadNetwork, city))) {
-            supplyLocations += city;
-            return true;
-        }
-        /* Or one of the city's neighbors supplies it */
-        for (string neighbor: roadNetwork[city]) {
-            if (canBeMadeDisasterReadyRec(roadNetwork, numCities - 1, supplyLocations,
-                                               citiesToSupply - findNeighbors(roadNetwork, neighbor))) {
-                supplyLocations += neighbor;
-                return true;
-             }
-         }
-    }
-    return false;
-}
-
-/* Wrapper function to create a set of cities to supply
- * and to kick off the recursion. */
 bool canBeMadeDisasterReady(const Map<string, Set<string>>& roadNetwork,
-                            int numCities, Set<string>& supplyLocations) {
-    if (numCities < 0) {
-        error("Must supply a non-negative amount of cities");
-    }
-    Set<string> citiesToSupply;
-    for (string city: roadNetwork) {
-        citiesToSupply += city;
-    }
-    return canBeMadeDisasterReadyRec(roadNetwork, numCities, supplyLocations, citiesToSupply);
+                            int numCities,
+                            Set<string>& supplyLocations) {
+    /* TODO: Delete the next few lines and implement this function. */
+    (void) roadNetwork;
+    (void) numCities;
+    (void) supplyLocations;
+    return false;
 }
 
 
@@ -104,19 +54,20 @@ bool isCovered(const string& city,
 
 /* * * * * * Test Cases Below This Point * * * * * */
 
-STUDENT_TEST("Works for three cities, but one is disconnected.") {
-    Map<string, Set<string>> map = makeSymmetric({
-        { "A", { "B" } },
-        { "B", { "A" } },
-        { "C", { } }
-    });
+/* TODO: Add your own custom tests here! */
 
-    Set<string> locations0, locations1, locations2, locations3, locations4;
-    EXPECT(!canBeMadeDisasterReady(map, 0, locations0));
-    EXPECT(!canBeMadeDisasterReady(map, 1, locations1));
-    EXPECT(canBeMadeDisasterReady(map, 2, locations2));
-    EXPECT(canBeMadeDisasterReady(map, 3, locations3));
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* * * * * Provided Tests Below This Point * * * * */
 
